@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absolute Cheese Chaos 🧀🔥</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #fff200; /* bright yellow */
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+  }
+
+  h1 {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #d2691e;
+    font-size: 3em;
+    text-shadow: 2px 2px #ffeb99;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .cheese-wheel {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: #ffec99;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    font-size: 2em;
+    user-select: none;
+    transition: transform 0.3s;
+    z-index: 1; /* base layer for cheeses */
+  }
+
+  .cheese-face {
+    pointer-events: none;
+  }
+
+  .speech-bubble {
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff8dc;
+    border: 2px solid #d2691e;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #b5651d;
+    white-space: nowrap;
+    display: none;
+    z-index: 9999; /* top-most layer */
+  }
+
+  .speech-bubble::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #fff8dc transparent transparent transparent;
+  }
+</style>
+</head>
+<body>
+<h1>Absolute Cheese Chaos 🧀🔥</h1>
+
+<script>
+// Cheese phrases
+const phrases = [
+  "Hey cutie! 🧀",
+  "Feeling gouda today?",
+  "You make me melt!",
+  "Cheddar luck next time 😉",
+  "Brie mine 😘",
+  "Emmental you tonight?",
+  "Swiss you were here!",
+  "Camembert you!",
+  "Feta late than never!",
+  "I’m nacho average cheese!"
+];
+
+// Random helper
+function random(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+// Generate chaotic cheese wheels
+const cheeseCount = 20;
+const cheeseWheels = [];
+
+for (let i = 0; i < cheeseCount; i++) {
+  const cheese = document.createElement('div');
+  cheese.className = 'cheese-wheel';
+  
+  const face = document.createElement('div');
+  face.className = 'cheese-face';
+  face.textContent = ['😏','😉','😜','😎'][Math.floor(random(0,4))];
+  face.dataset.original = face.textContent;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'speech-bubble';
+  bubble.textContent = phrases[Math.floor(random(0, phrases.length))];
+
+  cheese.appendChild(face);
+  cheese.appendChild(bubble);
+  document.body.appendChild(cheese);
+
+  // Random starting position
+  cheese.style.left = random(0, window.innerWidth - 100) + 'px';
+  cheese.style.top = random(50, window.innerHeight - 100) + 'px';
+
+  // Random velocities
+  cheese.vx = random(-3, 3);
+  cheese.vy = random(-3, 3);
+
+  cheese.onclick = () => {
+    // Bring clicked cheese and its bubble to front
+    cheese.style.zIndex = 10;
+    bubble.style.zIndex = 9999;
+
+    face.textContent = '😎';
+    bubble.style.display = 'block';
+
+    setTimeout(() => {
+      face.textContent = face.dataset.original;
+      bubble.style.display = 'none';
+      bubble.textContent = phrases[Math.floor(random(0, phrases.length))];
+      cheese.style.zIndex = 1; // reset z-index
+    }, 2000);
+  }
+
+  cheeseWheels.push(cheese);
+}
+
+// Animate chaos
+function animate() {
+  cheeseWheels.forEach(cheese => {
+    let x = parseFloat(cheese.style.left);
+    let y = parseFloat(cheese.style.top);
+
+    x += cheese.vx;
+    y += cheese.vy;
+
+    // Bounce off edges
+    if (x <= 0 || x >= window.innerWidth - 100) cheese.vx *= -1;
+    if (y <= 50 || y >= window.innerHeight - 100) cheese.vy *= -1;
+
+    cheese.style.left = x + 'px';
+    cheese.style.top = y + 'px';
+
+    // Subtle scaling for chaos
+    cheese.style.transform = `scale(${1 + Math.sin(Date.now()/200)/5})`;
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+// Window resize handling
+window.addEventListener('resize', () => {
+  cheeseWheels.forEach(c => {
+    c.style.left = Math.min(parseFloat(c.style.left), window.innerWidth - 100) + 'px';
+    c.style.top = Math.min(parseFloat(c.style.top), window.innerHeight - 100) + 'px';
+  });
+});
+</script>
+</body>
+</html>
